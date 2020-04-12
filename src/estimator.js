@@ -113,9 +113,9 @@ function setInfectionsByRequestedTime(data) {
 
   const factor = getDayFactor(input.periodType, input.timeToElapse);
 
-  impact.infectionsByRequestedTime = impact.currentlyInfected * 2 ** factor;
+  impact.infectionsByRequestedTime = impact.currentlyInfected * (2 ** factor);
 
-  severeImpact.infectionsByRequestedTime = impact.currentlyInfected * 2 ** factor;
+  severeImpact.infectionsByRequestedTime = impact.currentlyInfected * (2 ** factor);
 
   return buildOutput(input, impact, severeImpact);
 }

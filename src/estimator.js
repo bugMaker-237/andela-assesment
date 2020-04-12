@@ -128,11 +128,11 @@ function setInfectionsByRequestedTime(data) {
 function setSevereCasesByRequestedTime(data) {
   const { data: input, impact, severeImpact } = data;
 
-  impact.severeCasesByRequestedTime = Math.trunc(impact
+  impact.severeCasesByRequestedTime = Math.round(impact
     .infectionsByRequestedTime
   * Rates.infectionsByRequestedTime);
 
-  severeImpact.severeCasesByRequestedTime = Math.trunc(severeImpact
+  severeImpact.severeCasesByRequestedTime = Math.round(severeImpact
     .infectionsByRequestedTime
     * Rates.infectionsByRequestedTime);
 

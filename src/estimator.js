@@ -258,20 +258,4 @@ const covid19ImpactEstimator = (data) => setDollarsInFlight(
   )
 );
 
-console.log(
-  covid19ImpactEstimator({
-    periodType: 'months',
-    population: 7994849,
-    region: {
-      avgAge: 19.7,
-      avgDailyIncomeInUSD: 1,
-      avgDailyIncomePopulation: 0.55,
-      name: 'Africa'
-    },
-    reportedCases: 1773,
-    timeToElapse: 3,
-    totalHospitalBeds: 152677
-  })
-);
-
-// export default covid19ImpactEstimator;
+export default covid19ImpactEstimator;

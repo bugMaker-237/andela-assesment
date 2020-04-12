@@ -1,12 +1,14 @@
 // @ts-check
 
-//#region  Type Def
+// #region  Type Def
 /**
  * @typedef {'days'| 'months' | 'weeks'} Period
+ * @typedef {{name:string;avgAge:Number;avgDailyIncomeInUSD:Number;
+ * avgDailyIncomePopulation:Number}} Region
  */
 /**
  * @typedef {Object} EstimatorInput
- * @property {{name:string;avgAge:Number;avgDailyIncomeInUSD:Number;avgDailyIncomePopulation:Number}} region
+ * @property {Region} region
  * @property {Period} periodType
  * @property {Number} timeToElapse
  * @property {Number} reportedCases
@@ -36,7 +38,7 @@
  * @property {EstimatorOutput} output
  */
 
-//#endregion
+// #region
 
 /**
  * @type {EstimatorOutput}
@@ -60,6 +62,43 @@ const Rates = {
   casesForICUByRequestedTime: 0.05,
   casesForVentilatorsByRequestedTime: 0.02
 };
+// #region Utils
+/**
+ * gets the days
+ * @param {Period} periodType
+ * @param {Number} timeToElapse
+ * @returns {Number}
+ */
+function getDays(periodType, timeToElapse) {
+  let days = 0;
+
+  switch (periodType) {
+    case 'days':
+      days = timeToElapse / 3;
+      break;
+    case 'weeks':
+      days = timeToElapse * 7;
+      break;
+    case 'months':
+      days = timeToElapse * 30;
+      break;
+    default:
+      break;
+  }
+
+  return days;
+}
+
+/**
+ * gets the day factor
+ * @param {Period} periodType
+ * @param {Number} timeToElapse
+ * @returns {Number}
+ */
+function getDayFactor(periodType, timeToElapse) {
+  return getDays(periodType, timeToElapse) / 3;
+}
+// #endregion
 
 // HINT : Input data
 // {
@@ -75,27 +114,6 @@ const Rates = {
 //    population: 66622705,
 //    totalHospitalBeds: 1380614
 // }
-
-/**
- * Entry point
- * @param {EstimatorInput} data
- */
-const covid19ImpactEstimator = (data) =>
-  setDollarsInFlight(
-    setCasesForVentilatorsByRequestedTime(
-      setCasesForICUByRequestedTime(
-        setHospitalBedsByRequestedTime(
-          setSevereCasesByRequestedTime(
-            setInfectionsByRequestedTime(
-              setCurrentlyInfected(
-                setData({ input: data, output: finalOutput })
-              )
-            )
-          )
-        )
-      )
-    )
-  );
 
 /**
  * sets input data in output
@@ -115,11 +133,9 @@ function setData(data) {
 // @ts-ignore
 function setCurrentlyInfected(data) {
   const { input } = data;
-  const estimate = data.output.estimate;
-  estimate.impact.currentlyInfected =
-    input.reportedCases * Rates.reportedCasesRate;
-  estimate.severeImpact.currentlyInfected =
-    input.reportedCases * Rates.severeReportedCases;
+  const { estimate } = data.output;
+  estimate.impact.currentlyInfected = input.reportedCases * Rates.reportedCasesRate;
+  estimate.severeImpact.currentlyInfected = input.reportedCases * Rates.severeReportedCases;
   return data;
 }
 
@@ -130,15 +146,13 @@ function setCurrentlyInfected(data) {
  */
 function setInfectionsByRequestedTime(data) {
   const { input } = data;
-  const estimate = data.output.estimate;
+  const { estimate } = data.output;
 
-  const factor = _getDayFactor(input.periodType, input.timeToElapse);
+  const factor = getDayFactor(input.periodType, input.timeToElapse);
 
-  estimate.impact.infectionsByRequestedTime =
-    estimate.impact.currentlyInfected * Math.pow(2, factor);
+  estimate.impact.infectionsByRequestedTime = estimate.impact.currentlyInfected * 2 ** factor;
 
-  estimate.severeImpact.infectionsByRequestedTime =
-    estimate.impact.currentlyInfected * Math.pow(2, factor);
+  estimate.severeImpact.infectionsByRequestedTime = estimate.impact.currentlyInfected * 2 ** factor;
 
   return data;
 }
@@ -149,14 +163,13 @@ function setInfectionsByRequestedTime(data) {
  * @returns {NavigationData}
  */
 function setSevereCasesByRequestedTime(data) {
-  const estimate = data.output.estimate;
+  const { estimate } = data.output;
 
-  estimate.impact.severeCasesByRequestedTime =
-    estimate.impact.infectionsByRequestedTime * Rates.infectionsByRequestedTime;
+  estimate.impact.severeCasesByRequestedTime = estimate.impact.infectionsByRequestedTime
+  * Rates.infectionsByRequestedTime;
 
-  estimate.severeImpact.severeCasesByRequestedTime =
-    estimate.severeImpact.infectionsByRequestedTime *
-    Rates.infectionsByRequestedTime;
+  estimate.severeImpact.severeCasesByRequestedTime = estimate.severeImpact.infectionsByRequestedTime
+    * Rates.infectionsByRequestedTime;
 
   return data;
 }
@@ -168,15 +181,15 @@ function setSevereCasesByRequestedTime(data) {
  */
 function setHospitalBedsByRequestedTime(data) {
   const { input } = data;
-  const estimate = data.output.estimate;
+  const { estimate } = data.output;
 
   const bedAvailaibility = input.totalHospitalBeds * Rates.bedAvailaibility;
 
-  estimate.impact.hospitalBedsByRequestedTime =
-    bedAvailaibility - estimate.impact.severeCasesByRequestedTime;
+  estimate.impact.hospitalBedsByRequestedTime = bedAvailaibility
+  - estimate.impact.severeCasesByRequestedTime;
 
-  estimate.severeImpact.hospitalBedsByRequestedTime =
-    bedAvailaibility - estimate.severeImpact.severeCasesByRequestedTime;
+  estimate.severeImpact.hospitalBedsByRequestedTime = bedAvailaibility
+  - estimate.severeImpact.severeCasesByRequestedTime;
 
   return data;
 }
@@ -187,16 +200,13 @@ function setHospitalBedsByRequestedTime(data) {
  * @returns {NavigationData}
  */
 function setCasesForICUByRequestedTime(data) {
-  const { input } = data;
-  const estimate = data.output.estimate;
+  const { estimate } = data.output;
 
-  estimate.impact.casesForICUByRequestedTime =
-    estimate.impact.infectionsByRequestedTime *
-    Rates.casesForICUByRequestedTime;
+  estimate.impact.casesForICUByRequestedTime = estimate.impact.infectionsByRequestedTime
+    * Rates.casesForICUByRequestedTime;
 
-  estimate.severeImpact.casesForICUByRequestedTime =
-    estimate.severeImpact.infectionsByRequestedTime *
-    Rates.casesForICUByRequestedTime;
+  estimate.severeImpact.casesForICUByRequestedTime = estimate.severeImpact.infectionsByRequestedTime
+    * Rates.casesForICUByRequestedTime;
 
   return data;
 }
@@ -207,16 +217,13 @@ function setCasesForICUByRequestedTime(data) {
  * @returns {NavigationData}
  */
 function setCasesForVentilatorsByRequestedTime(data) {
-  const { input } = data;
-  const estimate = data.output.estimate;
+  const { estimate } = data.output;
 
-  estimate.impact.casesForVentilatorsByRequestedTime =
-    estimate.impact.infectionsByRequestedTime *
-    Rates.casesForVentilatorsByRequestedTime;
+  estimate.impact.casesForVentilatorsByRequestedTime = estimate.impact.infectionsByRequestedTime
+    * Rates.casesForVentilatorsByRequestedTime;
 
-  estimate.severeImpact.casesForVentilatorsByRequestedTime =
-    estimate.severeImpact.infectionsByRequestedTime *
-    Rates.casesForVentilatorsByRequestedTime;
+  estimate.severeImpact.casesForVentilatorsByRequestedTime = estimate.severeImpact
+    .infectionsByRequestedTime * Rates.casesForVentilatorsByRequestedTime;
 
   return data;
 }
@@ -228,57 +235,40 @@ function setCasesForVentilatorsByRequestedTime(data) {
  */
 function setDollarsInFlight(data) {
   const { input } = data;
-  const estimate = data.output.estimate;
+  const { estimate } = data.output;
 
-  estimate.impact.dollarsInFlight =
-    estimate.impact.infectionsByRequestedTime *
-    input.region.avgDailyIncomePopulation *
-    input.region.avgDailyIncomeInUSD *
-    _getDays(input.periodType, input.timeToElapse);
+  estimate.impact.dollarsInFlight = estimate.impact.infectionsByRequestedTime
+    * input.region.avgDailyIncomePopulation
+    * input.region.avgDailyIncomeInUSD
+    * getDays(input.periodType, input.timeToElapse);
 
-  estimate.severeImpact.casesForVentilatorsByRequestedTime =
-    estimate.severeImpact.infectionsByRequestedTime *
-    input.region.avgDailyIncomePopulation *
-    input.region.avgDailyIncomeInUSD *
-    _getDays(input.periodType, input.timeToElapse);
+  estimate.severeImpact.casesForVentilatorsByRequestedTime = estimate.severeImpact
+    .infectionsByRequestedTime
+    * input.region.avgDailyIncomePopulation
+    * input.region.avgDailyIncomeInUSD
+    * getDays(input.periodType, input.timeToElapse);
 
   return data;
 }
 
 /**
- * gets the day factor
- * @param {Period} periodType
- * @param {Number} timeToElapse
- * @returns {Number}
+ * Entry point
+ * @param {EstimatorInput} data
  */
-function _getDayFactor(periodType, timeToElapse) {
-  return _getDays(periodType, timeToElapse) / 3;
-}
-
-/**
- * gets the days
- * @param {Period} periodType
- * @param {Number} timeToElapse
- * @returns {Number}
- */
-function _getDays(periodType, timeToElapse) {
-  let days = 0;
-
-  switch (periodType) {
-    case 'days':
-      days = timeToElapse / 3;
-      break;
-    case 'weeks':
-      days = timeToElapse * 7;
-      break;
-    case 'months':
-      days = timeToElapse * 30;
-      break;
-    default:
-      break;
-  }
-
-  return days;
-}
+const covid19ImpactEstimator = (data) => setDollarsInFlight(
+  setCasesForVentilatorsByRequestedTime(
+    setCasesForICUByRequestedTime(
+      setHospitalBedsByRequestedTime(
+        setSevereCasesByRequestedTime(
+          setInfectionsByRequestedTime(
+            setCurrentlyInfected(
+              setData({ input: data, output: finalOutput })
+            )
+          )
+        )
+      )
+    )
+  )
+);
 
 export default covid19ImpactEstimator;

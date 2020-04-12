@@ -245,7 +245,7 @@ function setDollarsInFlight(data) {
 }
 
 /**
- * Entry point
+ * Estimator Entry point
  * @param {EstimatorInput} data
  */
 const covid19ImpactEstimator = (data) => setDollarsInFlight(

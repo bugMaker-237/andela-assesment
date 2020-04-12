@@ -32,7 +32,14 @@ const log = (method, path, status, elapsedTime) => {
   );
 };
 
-const getLogs = () => FileSystem.readFileSync(join(__dirname, 'logs.log'), 'utf8').toString();
+const getLogs = () => {
+  const logPath = join(__dirname, 'logs.log');
+  if (FileSystem.exists(logPath)) {
+    FileSystem.readFileSync(logPath, 'utf8').toString();
+  } else {
+    FileSystem.writeFileSync(logPath, '');
+  }
+};
 
 const server = createServer((req, res) => {
   const reqUrl = parse(req.url, true);

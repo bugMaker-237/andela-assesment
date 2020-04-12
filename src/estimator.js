@@ -124,7 +124,7 @@ const buildOutput = (input, estimate) => ({ data: input, estimate });
 // @ts-ignore
 function setCurrentlyInfected(data) {
   const { data: input, estimate } = data;
-  estimate.impact.currentlyInfected = input.reportedCases * Rates.reportedCasesRate;
+  estimate.impact.currentlyInfected = input.reportedCases * Rates.reportedCases;
   estimate.severeImpact.currentlyInfected = input.reportedCases * Rates.severeReportedCases;
   return buildOutput(input, estimate);
 }
@@ -258,4 +258,20 @@ const covid19ImpactEstimator = (data) => setDollarsInFlight(
   )
 );
 
-export default covid19ImpactEstimator;
+console.log(
+  covid19ImpactEstimator({
+    periodType: 'months',
+    population: 7994849,
+    region: {
+      avgAge: 19.7,
+      avgDailyIncomeInUSD: 1,
+      avgDailyIncomePopulation: 0.55,
+      name: 'Africa'
+    },
+    reportedCases: 1773,
+    timeToElapse: 3,
+    totalHospitalBeds: 152677
+  })
+);
+
+// export default covid19ImpactEstimator;

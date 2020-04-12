@@ -207,7 +207,7 @@ function setDollarsInFlight(data) {
     * input.region.avgDailyIncomeInUSD
     * getDays(input.periodType, input.timeToElapse));
 
-  severeImpact.casesForVentilatorsByRequestedTime = Math.trunc(severeImpact
+  severeImpact.dollarsInFlight = Math.trunc(severeImpact
     .infectionsByRequestedTime
     * input.region.avgDailyIncomePopulation
     * input.region.avgDailyIncomeInUSD

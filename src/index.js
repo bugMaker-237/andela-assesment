@@ -12,7 +12,7 @@ const respondWithXML = (res, obj) => {
   res.setHeader('Content-Type', 'application/xml');
   const convert = data2XML();
   const xml = convert('result', obj);
-  res.res.write(xml);
+  res.write(xml);
 };
 
 const respondWithJSON = (res, obj) => {

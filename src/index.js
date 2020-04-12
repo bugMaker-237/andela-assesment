@@ -5,7 +5,7 @@ const FileSystem = require('fs');
 const { join } = require('path');
 const estimator = require('./estimator').default;
 
-const port = process.env.PORT || 8900;
+const port = process.env.PORT || 5000;
 const apiUrl = '/api/v1/on-covid-19';
 
 const respondWithXML = (res, obj) => {

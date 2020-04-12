@@ -69,7 +69,7 @@ function getDays(periodType, timeToElapse) {
 
   switch (periodType) {
     case 'days':
-      days = timeToElapse / 3;
+      days = timeToElapse;
       break;
     case 'weeks':
       days = timeToElapse * 7;
@@ -90,7 +90,9 @@ function getDays(periodType, timeToElapse) {
  * @param {Number} timeToElapse
  * @returns {Number}
  */
-const getDayFactor = (periodType, timeToElapse) => getDays(periodType, timeToElapse) / 3;
+const getDayFactor = (periodType, timeToElapse) => Math.trunc(
+  getDays(periodType, timeToElapse) / 3
+);
 
 /**
  * @param {EstimatorInput} input
@@ -98,26 +100,6 @@ const getDayFactor = (periodType, timeToElapse) => getDays(periodType, timeToEla
  * @returns {EstimatorOutput}
  */
 const buildOutput = (input, estimate) => ({ data: input, estimate });
-
-const ride = (keys, obj) => {
-  for (let i = 0; i < keys.length; i += 1) {
-    const elt = obj[keys[i]];
-    if (typeof elt === 'number') {
-      obj[keys[i]] = Math.trunc(elt);
-    }
-  }
-  return obj;
-};
-
-/**
- * @param {EstimatorOutput} obj
- */
-const truncateAllNumbers = (obj) => {
-  const keys = Object.keys(obj.estimate.impact);
-  obj.estimate.impact = ride(keys, obj.estimate.impact);
-  obj.estimate.severeImpact = ride(keys, obj.estimate.severeImpact);
-  return obj;
-};
 
 // #endregion
 
@@ -173,11 +155,13 @@ function setInfectionsByRequestedTime(data) {
 function setSevereCasesByRequestedTime(data) {
   const { data: input, estimate } = data;
 
-  estimate.impact.severeCasesByRequestedTime = estimate.impact.infectionsByRequestedTime
-  * Rates.infectionsByRequestedTime;
+  estimate.impact.severeCasesByRequestedTime = Math.trunc(estimate.impact
+    .infectionsByRequestedTime
+  * Rates.infectionsByRequestedTime);
 
-  estimate.severeImpact.severeCasesByRequestedTime = estimate.severeImpact.infectionsByRequestedTime
-    * Rates.infectionsByRequestedTime;
+  estimate.severeImpact.severeCasesByRequestedTime = Math.trunc(estimate.severeImpact
+    .infectionsByRequestedTime
+    * Rates.infectionsByRequestedTime);
 
   return buildOutput(input, estimate);
 }
@@ -190,7 +174,7 @@ function setSevereCasesByRequestedTime(data) {
 function setHospitalBedsByRequestedTime(data) {
   const { data: input, estimate } = data;
 
-  const bedAvailaibility = input.totalHospitalBeds * Rates.bedAvailaibility;
+  const bedAvailaibility = Math.trunc(input.totalHospitalBeds * Rates.bedAvailaibility);
 
   estimate.impact.hospitalBedsByRequestedTime = bedAvailaibility
   - estimate.impact.severeCasesByRequestedTime;
@@ -209,11 +193,13 @@ function setHospitalBedsByRequestedTime(data) {
 function setCasesForICUByRequestedTime(data) {
   const { data: input, estimate } = data;
 
-  estimate.impact.casesForICUByRequestedTime = estimate.impact.infectionsByRequestedTime
-    * Rates.casesForICUByRequestedTime;
+  estimate.impact.casesForICUByRequestedTime = Math.trunc(estimate.impact
+    .infectionsByRequestedTime
+    * Rates.casesForICUByRequestedTime);
 
-  estimate.severeImpact.casesForICUByRequestedTime = estimate.severeImpact.infectionsByRequestedTime
-    * Rates.casesForICUByRequestedTime;
+  estimate.severeImpact.casesForICUByRequestedTime = Math.trunc(estimate.severeImpact
+    .infectionsByRequestedTime
+    * Rates.casesForICUByRequestedTime);
 
   return buildOutput(input, estimate);
 }
@@ -226,11 +212,12 @@ function setCasesForICUByRequestedTime(data) {
 function setCasesForVentilatorsByRequestedTime(data) {
   const { data: input, estimate } = data;
 
-  estimate.impact.casesForVentilatorsByRequestedTime = estimate.impact.infectionsByRequestedTime
-    * Rates.casesForVentilatorsByRequestedTime;
+  estimate.impact.casesForVentilatorsByRequestedTime = Math.trunc(estimate.impact
+    .infectionsByRequestedTime
+    * Rates.casesForVentilatorsByRequestedTime);
 
-  estimate.severeImpact.casesForVentilatorsByRequestedTime = estimate.severeImpact
-    .infectionsByRequestedTime * Rates.casesForVentilatorsByRequestedTime;
+  estimate.severeImpact.casesForVentilatorsByRequestedTime = Math.trunc(estimate.severeImpact
+    .infectionsByRequestedTime * Rates.casesForVentilatorsByRequestedTime);
 
   return buildOutput(input, estimate);
 }
@@ -243,16 +230,16 @@ function setCasesForVentilatorsByRequestedTime(data) {
 function setDollarsInFlight(data) {
   const { data: input, estimate } = data;
 
-  estimate.impact.dollarsInFlight = estimate.impact.infectionsByRequestedTime
+  estimate.impact.dollarsInFlight = Math.trunc(estimate.impact.infectionsByRequestedTime
     * input.region.avgDailyIncomePopulation
     * input.region.avgDailyIncomeInUSD
-    * getDays(input.periodType, input.timeToElapse);
+    * getDays(input.periodType, input.timeToElapse));
 
-  estimate.severeImpact.casesForVentilatorsByRequestedTime = estimate.severeImpact
+  estimate.severeImpact.casesForVentilatorsByRequestedTime = Math.trunc(estimate.severeImpact
     .infectionsByRequestedTime
     * input.region.avgDailyIncomePopulation
     * input.region.avgDailyIncomeInUSD
-    * getDays(input.periodType, input.timeToElapse);
+    * getDays(input.periodType, input.timeToElapse));
 
   return buildOutput(input, estimate);
 }
@@ -261,16 +248,14 @@ function setDollarsInFlight(data) {
  * Entry point
  * @param {EstimatorInput} data
  */
-const covid19ImpactEstimator = (data) => truncateAllNumbers(
-  setDollarsInFlight(
-    setCasesForVentilatorsByRequestedTime(
-      setCasesForICUByRequestedTime(
-        setHospitalBedsByRequestedTime(
-          setSevereCasesByRequestedTime(
-            setInfectionsByRequestedTime(
-              setCurrentlyInfected(
-                buildOutput(data, initialOutput.estimate)
-              )
+const covid19ImpactEstimator = (data) => setDollarsInFlight(
+  setCasesForVentilatorsByRequestedTime(
+    setCasesForICUByRequestedTime(
+      setHospitalBedsByRequestedTime(
+        setSevereCasesByRequestedTime(
+          setInfectionsByRequestedTime(
+            setCurrentlyInfected(
+              buildOutput(data, initialOutput.estimate)
             )
           )
         )

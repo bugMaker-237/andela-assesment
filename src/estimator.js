@@ -128,11 +128,11 @@ function setInfectionsByRequestedTime(data) {
 function setSevereCasesByRequestedTime(data) {
   const { data: input, impact, severeImpact } = data;
 
-  impact.severeCasesByRequestedTime = Math.round(impact
+  impact.severeCasesByRequestedTime = Math.trunc(impact
     .infectionsByRequestedTime
   * Rates.infectionsByRequestedTime);
 
-  severeImpact.severeCasesByRequestedTime = Math.round(severeImpact
+  severeImpact.severeCasesByRequestedTime = Math.trunc(severeImpact
     .infectionsByRequestedTime
     * Rates.infectionsByRequestedTime);
 
@@ -147,13 +147,13 @@ function setSevereCasesByRequestedTime(data) {
 function setHospitalBedsByRequestedTime(data) {
   const { data: input, impact, severeImpact } = data;
 
-  const bedAvailaibility = Math.trunc(input.totalHospitalBeds * Rates.bedAvailaibility);
+  const bedAvailaibility = input.totalHospitalBeds * Rates.bedAvailaibility;
 
-  impact.hospitalBedsByRequestedTime = bedAvailaibility
-  - impact.severeCasesByRequestedTime;
+  impact.hospitalBedsByRequestedTime = Math.trunc(bedAvailaibility
+  - impact.severeCasesByRequestedTime);
 
-  severeImpact.hospitalBedsByRequestedTime = bedAvailaibility
-  - severeImpact.severeCasesByRequestedTime;
+  severeImpact.hospitalBedsByRequestedTime = Math.trunc(bedAvailaibility
+  - severeImpact.severeCasesByRequestedTime);
 
   return buildOutput(input, impact, severeImpact);
 }

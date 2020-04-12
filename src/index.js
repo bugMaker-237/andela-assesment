@@ -1,5 +1,3 @@
-require('@babel/register');
-
 const { createServer } = require('http');
 const { parse } = require('url');
 const data2XML = require('data2xml');

@@ -6,7 +6,7 @@
   "private": false,
   "scripts": {
     "build": "./node_modules/.bin/babel src -d lib",
-    "start": "node src/api",
+    "start": "node ./lib",
     "lint": "eslint ./src/"
   },
   "dependencies": {

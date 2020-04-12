@@ -9,14 +9,14 @@ const port = process.env.PORT || 8900;
 const apiUrl = '/api/v1/on-covid-19';
 
 const respondWithXML = (res, obj) => {
-  res.setHeader('Content-Type', 'text/xml');
+  res.setHeader('Content-Type', 'application/xml');
   const convert = data2XML();
   const xml = convert('result', obj);
-  res.write(xml);
+  res.res.write(xml);
 };
 
 const respondWithJSON = (res, obj) => {
-  res.setHeader('Content-Type', 'applicqtion/json');
+  res.setHeader('Content-Type', 'application/json');
   res.write(JSON.stringify(obj));
 };
 

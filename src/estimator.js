@@ -32,18 +32,13 @@
  * @property {{impact:EstimatorImpact; severeImpact:EstimatorImpact;}} estimate
  */
 
-/**
- * @typedef {Object} NavigationData
- * @property {EstimatorInput} input
- * @property {EstimatorOutput} output
- */
 
 // #region
 
 /**
  * @type {EstimatorOutput}
  */
-const finalOutput = {
+const initialOutput = {
   // @ts-ignore
   data: {},
   estimate: {
@@ -95,9 +90,15 @@ function getDays(periodType, timeToElapse) {
  * @param {Number} timeToElapse
  * @returns {Number}
  */
-function getDayFactor(periodType, timeToElapse) {
-  return getDays(periodType, timeToElapse) / 3;
-}
+const getDayFactor = (periodType, timeToElapse) => getDays(periodType, timeToElapse) / 3;
+
+/**
+ * @param {EstimatorInput} input
+ * @param {{impact:EstimatorImpact; severeImpact:EstimatorImpact;}} estimate
+ * @returns {EstimatorOutput}
+ */
+const buildOutput = (input, estimate) => ({ data: input, estimate });
+
 // #endregion
 
 // HINT : Input data
@@ -116,37 +117,25 @@ function getDayFactor(periodType, timeToElapse) {
 // }
 
 /**
- * sets input data in output
- * @param {NavigationData} data
- * @returns {NavigationData}
- */
-function setData(data) {
-  const { input, output } = data;
-  output.data = input;
-  return data;
-}
-/**
  * Sets currently infected cases
- * @param {NavigationData} data
- * @returns {NavigationData}
+ * @param {EstimatorOutput} data
+ * @returns {EstimatorOutput}
  */
 // @ts-ignore
 function setCurrentlyInfected(data) {
-  const { input } = data;
-  const { estimate } = data.output;
+  const { data: input, estimate } = data;
   estimate.impact.currentlyInfected = input.reportedCases * Rates.reportedCasesRate;
   estimate.severeImpact.currentlyInfected = input.reportedCases * Rates.severeReportedCases;
-  return data;
+  return buildOutput(input, estimate);
 }
 
 /**
  * Sets infectionsByRequestedTime
- * @param {NavigationData} data
- * @returns {NavigationData}
+ * @param {EstimatorOutput} data
+ * @returns {EstimatorOutput}
  */
 function setInfectionsByRequestedTime(data) {
-  const { input } = data;
-  const { estimate } = data.output;
+  const { data: input, estimate } = data;
 
   const factor = getDayFactor(input.periodType, input.timeToElapse);
 
@@ -154,16 +143,16 @@ function setInfectionsByRequestedTime(data) {
 
   estimate.severeImpact.infectionsByRequestedTime = estimate.impact.currentlyInfected * 2 ** factor;
 
-  return data;
+  return buildOutput(input, estimate);
 }
 
 /**
  * Sets severeCasesByRequestedTime
- * @param {NavigationData} data
- * @returns {NavigationData}
+ * @param {EstimatorOutput} data
+ * @returns {EstimatorOutput}
  */
 function setSevereCasesByRequestedTime(data) {
-  const { estimate } = data.output;
+  const { data: input, estimate } = data;
 
   estimate.impact.severeCasesByRequestedTime = estimate.impact.infectionsByRequestedTime
   * Rates.infectionsByRequestedTime;
@@ -171,17 +160,16 @@ function setSevereCasesByRequestedTime(data) {
   estimate.severeImpact.severeCasesByRequestedTime = estimate.severeImpact.infectionsByRequestedTime
     * Rates.infectionsByRequestedTime;
 
-  return data;
+  return buildOutput(input, estimate);
 }
 
 /**
  * Sets hospitalBedsByRequestedTime
- * @param {NavigationData} data
- * @returns {NavigationData}
+ * @param {EstimatorOutput} data
+ * @returns {EstimatorOutput}
  */
 function setHospitalBedsByRequestedTime(data) {
-  const { input } = data;
-  const { estimate } = data.output;
+  const { data: input, estimate } = data;
 
   const bedAvailaibility = input.totalHospitalBeds * Rates.bedAvailaibility;
 
@@ -191,16 +179,16 @@ function setHospitalBedsByRequestedTime(data) {
   estimate.severeImpact.hospitalBedsByRequestedTime = bedAvailaibility
   - estimate.severeImpact.severeCasesByRequestedTime;
 
-  return data;
+  return buildOutput(input, estimate);
 }
 
 /**
  * Sets casesForICUByRequestedTime
- * @param {NavigationData} data
- * @returns {NavigationData}
+ * @param {EstimatorOutput} data
+ * @returns {EstimatorOutput}
  */
 function setCasesForICUByRequestedTime(data) {
-  const { estimate } = data.output;
+  const { data: input, estimate } = data;
 
   estimate.impact.casesForICUByRequestedTime = estimate.impact.infectionsByRequestedTime
     * Rates.casesForICUByRequestedTime;
@@ -208,16 +196,16 @@ function setCasesForICUByRequestedTime(data) {
   estimate.severeImpact.casesForICUByRequestedTime = estimate.severeImpact.infectionsByRequestedTime
     * Rates.casesForICUByRequestedTime;
 
-  return data;
+  return buildOutput(input, estimate);
 }
 
 /**
  * Sets casesForVentilatorsByRequestedTime
- * @param {NavigationData} data
- * @returns {NavigationData}
+ * @param {EstimatorOutput} data
+ * @returns {EstimatorOutput}
  */
 function setCasesForVentilatorsByRequestedTime(data) {
-  const { estimate } = data.output;
+  const { data: input, estimate } = data;
 
   estimate.impact.casesForVentilatorsByRequestedTime = estimate.impact.infectionsByRequestedTime
     * Rates.casesForVentilatorsByRequestedTime;
@@ -225,17 +213,16 @@ function setCasesForVentilatorsByRequestedTime(data) {
   estimate.severeImpact.casesForVentilatorsByRequestedTime = estimate.severeImpact
     .infectionsByRequestedTime * Rates.casesForVentilatorsByRequestedTime;
 
-  return data;
+  return buildOutput(input, estimate);
 }
 
 /**
  * Sets casesForVentilatorsByRequestedTime
- * @param {NavigationData} data
- * @returns {NavigationData}
+ * @param {EstimatorOutput} data
+ * @returns {EstimatorOutput}
  */
 function setDollarsInFlight(data) {
-  const { input } = data;
-  const { estimate } = data.output;
+  const { data: input, estimate } = data;
 
   estimate.impact.dollarsInFlight = estimate.impact.infectionsByRequestedTime
     * input.region.avgDailyIncomePopulation
@@ -248,7 +235,7 @@ function setDollarsInFlight(data) {
     * input.region.avgDailyIncomeInUSD
     * getDays(input.periodType, input.timeToElapse);
 
-  return data;
+  return buildOutput(input, estimate);
 }
 
 /**
@@ -262,7 +249,7 @@ const covid19ImpactEstimator = (data) => setDollarsInFlight(
         setSevereCasesByRequestedTime(
           setInfectionsByRequestedTime(
             setCurrentlyInfected(
-              setData({ input: data, output: finalOutput })
+              buildOutput(data, initialOutput.estimate)
             )
           )
         )

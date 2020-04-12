@@ -35,7 +35,7 @@ const log = (method, path, status, elapsedTime) => {
 const getLogs = () => {
   const logPath = join(__dirname, 'logs.log');
 
-  if (FileSystem.exists(logPath)) {
+  if (FileSystem.existsSync(logPath)) {
     return FileSystem.readFileSync(logPath, 'utf8').toString();
   }
 

@@ -99,6 +99,26 @@ const getDayFactor = (periodType, timeToElapse) => getDays(periodType, timeToEla
  */
 const buildOutput = (input, estimate) => ({ data: input, estimate });
 
+const ride = (keys, obj) => {
+  for (let i = 0; i < keys.length; i += 1) {
+    const elt = obj[keys[i]];
+    if (typeof elt === 'number') {
+      obj[keys[i]] = Math.trunc(elt);
+    }
+  }
+  return obj;
+};
+
+/**
+ * @param {EstimatorOutput} obj
+ */
+const truncateAllNumbers = (obj) => {
+  const keys = Object.keys(obj.estimate.impact);
+  obj.estimate.impact = ride(keys, obj.estimate.impact);
+  obj.estimate.severeImpact = ride(keys, obj.estimate.severeImpact);
+  return obj;
+};
+
 // #endregion
 
 // HINT : Input data
@@ -121,7 +141,6 @@ const buildOutput = (input, estimate) => ({ data: input, estimate });
  * @param {EstimatorOutput} data
  * @returns {EstimatorOutput}
  */
-// @ts-ignore
 function setCurrentlyInfected(data) {
   const { data: input, estimate } = data;
   estimate.impact.currentlyInfected = input.reportedCases * Rates.reportedCases;
@@ -242,14 +261,16 @@ function setDollarsInFlight(data) {
  * Entry point
  * @param {EstimatorInput} data
  */
-const covid19ImpactEstimator = (data) => setDollarsInFlight(
-  setCasesForVentilatorsByRequestedTime(
-    setCasesForICUByRequestedTime(
-      setHospitalBedsByRequestedTime(
-        setSevereCasesByRequestedTime(
-          setInfectionsByRequestedTime(
-            setCurrentlyInfected(
-              buildOutput(data, initialOutput.estimate)
+const covid19ImpactEstimator = (data) => truncateAllNumbers(
+  setDollarsInFlight(
+    setCasesForVentilatorsByRequestedTime(
+      setCasesForICUByRequestedTime(
+        setHospitalBedsByRequestedTime(
+          setSevereCasesByRequestedTime(
+            setInfectionsByRequestedTime(
+              setCurrentlyInfected(
+                buildOutput(data, initialOutput.estimate)
+              )
             )
           )
         )
@@ -258,4 +279,20 @@ const covid19ImpactEstimator = (data) => setDollarsInFlight(
   )
 );
 
-export default covid19ImpactEstimator;
+console.log(
+  covid19ImpactEstimator({
+    periodType: 'days',
+    population: 3019739,
+    region: {
+      avgAge: 19.7,
+      avgDailyIncomeInUSD: 1,
+      avgDailyIncomePopulation: 0.65,
+      name: 'Africa'
+    },
+    reportedCases: 1983,
+    timeToElapse: 75,
+    totalHospitalBeds: 103125
+  })
+);
+
+// export default covid19ImpactEstimator;

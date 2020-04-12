@@ -28,7 +28,7 @@ const respondWithPlainText = (res, obj) => {
 const log = (method, path, status, elapsedTime) => {
   FileSystem.appendFileSync(
     join(__dirname, 'logs.log'),
-    `${method}\t\t ${path}\t\t ${status}\t\t ${elapsedTime}ms\n`
+    `${method} ${path} ${status} ${elapsedTime}ms\n`
   );
 };
 

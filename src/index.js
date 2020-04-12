@@ -5,10 +5,10 @@ const { parse } = require('url');
 const data2XML = require('data2xml');
 const FileSystem = require('fs');
 const { join } = require('path');
-const estimator = require('../estimator').default;
+const estimator = require('./estimator').default;
 
 const hostname = '127.0.0.1';
-const port = 8900;
+const port = 80;
 const apiUrl = '/api/v1/on-covid-19';
 
 const respondWithXML = (res, obj) => {

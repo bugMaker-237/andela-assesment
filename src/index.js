@@ -5,8 +5,7 @@ const FileSystem = require('fs');
 const { join } = require('path');
 const estimator = require('./estimator').default;
 
-const hostname = '127.0.0.1';
-const port = 80;
+const port = process.env.PORT || 8900;
 const apiUrl = '/api/v1/on-covid-19';
 
 const respondWithXML = (res, obj) => {
@@ -83,6 +82,6 @@ const server = createServer((req, res) => {
     res.end();
   }
 });
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+server.listen(port, () => {
+  console.log(`Server running on :${port}`);
 });

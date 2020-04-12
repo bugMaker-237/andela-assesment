@@ -115,7 +115,7 @@ function setInfectionsByRequestedTime(data) {
 
   impact.infectionsByRequestedTime = impact.currentlyInfected * (2 ** factor);
 
-  severeImpact.infectionsByRequestedTime = impact.currentlyInfected * (2 ** factor);
+  severeImpact.infectionsByRequestedTime = severeImpact.currentlyInfected * (2 ** factor);
 
   return buildOutput(input, impact, severeImpact);
 }

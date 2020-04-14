@@ -44,7 +44,7 @@ const getLogs = () => {
 
 const server = createServer((req, res) => {
   const reqUrl = parse(req.url, true);
-  const start = new Date();
+  const start = Date.now();
   try {
     if (reqUrl.pathname.startsWith(apiUrl)) {
       const [, route] = reqUrl.pathname.split(apiUrl);
@@ -64,11 +64,11 @@ const server = createServer((req, res) => {
             respondWithJSON(res, estimations);
           }
           res.statusCode = 200;
-          log(req.method, reqUrl.pathname, res.statusCode, new Date() - start);
+          log(req.method, reqUrl.pathname, res.statusCode, Date.now() - start);
         } else if (route === '/logs' && req.method === 'GET') {
           res.statusCode = 200;
           respondWithPlainText(res, getLogs());
-          log(req.method, reqUrl.pathname, res.statusCode, new Date() - start);
+          log(req.method, reqUrl.pathname, res.statusCode, Date.now() - start);
         } else {
           res.statusCode = 400;
           respondWithPlainText(res, 'NO DATA FOUND IN REQUEST');

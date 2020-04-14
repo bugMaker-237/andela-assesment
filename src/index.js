@@ -28,9 +28,9 @@ const respondWithPlainText = (res, obj) => {
 const log = (method, path, status, startTime) => {
   FileSystem.appendFileSync(
     join(__dirname, 'logs.log'),
-    `${method} ${path} ${status} ${
-      new Date().getTime() - startTime.getTime()
-    }ms\n`
+    `${method} ${path} ${status} ${(new Date().getTime() - startTime.getTime())
+      .toString()
+      .padStart(2, '0')}ms\n`
   );
 };
 

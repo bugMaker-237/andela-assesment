@@ -66,16 +66,22 @@ const server = createServer((req, res) => {
             respondWithJSON(res, estimations);
           }
           res.statusCode = 200;
-          log(req.method, reqUrl.pathname, res.statusCode, start);
         } else if (route === '/logs' && req.method === 'GET') {
           res.statusCode = 200;
           respondWithPlainText(res, getLogs());
-          log(req.method, reqUrl.pathname, res.statusCode, start);
         } else {
           res.statusCode = 400;
           respondWithPlainText(res, 'NO DATA FOUND IN REQUEST');
         }
         res.end();
+      });
+
+      res.on('close', () => {
+        if (route === '/logs' && req.method === 'GET') {
+          log(req.method, reqUrl.pathname, res.statusCode, start);
+        } else {
+          log(req.method, reqUrl.pathname, res.statusCode, start);
+        }
       });
     } else {
       res.statusCode = 200;

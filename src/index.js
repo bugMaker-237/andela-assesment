@@ -64,19 +64,19 @@ const server = createServer((req, res) => {
             respondWithJSON(res, estimations);
           }
           res.statusCode = 200;
+          log(req.method, reqUrl.pathname, res.statusCode, new Date() - start);
         } else if (route === '/logs' && req.method === 'GET') {
           res.statusCode = 200;
           respondWithPlainText(res, getLogs());
+          log(req.method, reqUrl.pathname, res.statusCode, new Date() - start);
         } else {
           res.statusCode = 400;
           respondWithPlainText(res, 'NO DATA FOUND IN REQUEST');
         }
-        log(req.method, reqUrl.pathname, res.statusCode, new Date() - start);
         res.end();
       });
     } else {
       res.statusCode = 200;
-      log(req.method, reqUrl.pathname, res.statusCode, new Date() - start);
       respondWithPlainText(
         res,
         'BuildforSDG-Cohort1-Assessment/covid-19-estimator'
@@ -85,7 +85,6 @@ const server = createServer((req, res) => {
     }
   } catch (error) {
     res.statusCode = 500;
-    log(req.method, reqUrl.pathname, res.statusCode, new Date() - start);
     respondWithPlainText(res, error.message);
     res.end();
   }

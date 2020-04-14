@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>COVID ESTIMATOR</title>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <meta
+    name="title"
+    content="BuildforSDG Challenge Assessment"
+  />
+  <meta
+    name="description"
+    content="BuildforSDG Challenge Assessment Sample project"
+  />
+  <!-- Open Graph / Facebook -->
+  <meta
+    property="og:type"
+    content="webapp"
+  />
+  <meta
+    property="og:url"
+    content="https://andela-js-assesment.herokuapp.com"
+  />
+  <meta
+    property="og:title"
+    content="Etienne B. Yamsi"
+  />
+  <meta
+    property="og:description"
+    content="BuildforSDG Challenge Assessment Sample project"
+  />
+  <meta
+    property="og:image"
+    content="https://andela-js-assesment.herokuapp.com/img.jpg"
+  />
+
+  <!-- Twitter -->
+  <meta
+    property="twitter:card"
+    content="summary_large_image"
+  />
+  <meta
+    property="twitter:url"
+    content="https://andela-js-assesment.herokuapp.com"
+  />
+  <meta
+    property="twitter:title"
+    content="BuildforSDG Challenge Assessment"
+  />
+  <meta
+    property="twitter:description"
+    content="BuildforSDG Challenge Assessment Sample project"
+  />
+  <meta
+    property="twitter:image"
+    content="https://andela-js-assesment.herokuapp.com"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    href="./style.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="shortcut icon"
+    href="./img.jpg"
+    type="image/jpg"
+  />
+</head>
+
+<body class="flex flex-row">
+  <main class="flex flex-column flex-100 flex-row-responsive">
+
+    <h1 class="header">COVID-19 ESTIMATOR</h1>
+    <div class="flex flex-row flex-100">
+      <div class="block-1">
+        <div
+          class="flex flex-column card-2"
+          aria-label="Form"
+          id="form"
+        >
+          <h4>Please fill this form</h4>
+          <input
+            aria-label="Population"
+            aria-placeholder="Population"
+            placeholder="Population"
+            type="number"
+            data-population
+          />
+          <input
+            aria-label="Time to elapse"
+            aria-placeholder="Time to elapse"
+            placeholder="Time to elapse"
+            type="number"
+            data-time-to-elapse
+          />
+          <input
+            aria-label="Reported cases"
+            aria-placeholder="Reported cases"
+            placeholder="Reported cases"
+            type="number"
+            data-reported-cases
+          />
+          <input
+            aria-label="Hospital beds"
+            aria-placeholder="Hospital beds"
+            placeholder="Hospital beds"
+            type="number"
+            data-total-hospital-beds
+          />
+          <select
+            aria-label="Period type"
+            aria-placeholder="Period type"
+            placeholder="period type"
+            data-period-type
+          >
+            <option
+              aria-label="Days"
+              value="days"
+            >Days</option>
+            <option
+              aria-label="Months"
+              value="months"
+            >Months</option>
+            <option
+              aria-label="Weeks"
+              value="weeks"
+            >Weeks</option>
+          </select>
+          <button
+            aria-label="Estimate"
+            class="card-1"
+            data-go-estimate
+          >Estimate</button>
+        </div>
+      </div>
+      <div class="block-2 flex-100 flex flex-row flex-row-responsive">
+        <div class="impact flex-100 card-5">
+          <h2>Impact</h2>
+          <div id="impact">
+            <div class="color-blocks flex-row flex-wrap flex">
+              <div>
+                <h3>Currently Infected</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Infections</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Severe cases</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Hostipal beds</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Cases for ICU</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Cases for Ventilators</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Dollars in flight</h3>
+                <h3>$ 0</h3>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="impact flex-100 card-5">
+          <h2>Severe Impact</h2>
+          <div id="severe-impact">
+            <div class="color-blocks flex-row flex-wrap flex">
+              <div>
+                <h3>Currently Infected</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Infections</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Severe cases</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Hostipal beds</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Cases for ICU</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Cases for Ventilators</h3>
+                <h3>0</h3>
+              </div>
+              <div>
+                <h3>Dollars in flight</h3>
+                <h3>$ 0</h3>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+  <template id="impact-template">
+    <div class="color-blocks flex-row flex-wrap flex">
+      <div>
+        <h3>Currently Infected</h3>
+        <h3>#currentlyInfected</h3>
+      </div>
+      <div>
+        <h3>Infections</h3>
+        <h3>#infectionsByRequestedTime</h3>
+      </div>
+      <div>
+        <h3>Severe cases</h3>
+        <h3>#severeCasesByRequestedTime</h3>
+      </div>
+      <div>
+        <h3>Hostipal beds</h3>
+        <h3>#hospitalBedsByRequestedTime</h3>
+      </div>
+      <div>
+        <h3>Cases for ICU</h3>
+        <h3>#casesForICUByRequestedTime</h3>
+      </div>
+      <div>
+        <h3>Cases for Ventilators</h3>
+        <h3>#casesForVentilatorsByRequestedTime</h3>
+      </div>
+      <div>
+        <h3>Dollars in flight</h3>
+        <h3>$ #dollarsInFlight</h3>
+      </div>
+    </div>
+  </template>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./estimator-web.js"></script>
+  <script src="./web-app.js"></script>
+</body>
+
+</html>

@@ -84,12 +84,31 @@ const server = createServer((req, res) => {
         }
       });
     } else {
-      res.statusCode = 200;
-      respondWithPlainText(
-        res,
-        'BuildforSDG-Cohort1-Assessment/covid-19-estimator'
-      );
-      res.end();
+      console.log(req.url);
+      const url = req.url === '/' ? 'index.html' : req.url;
+      FileSystem.readFile(join(__dirname, `ui/${url}`), (err, data) => {
+        if (!err) {
+          const dotoffset = url.lastIndexOf('.');
+          const mimetype = dotoffset === -1
+            ? 'text/plain'
+            : {
+              '.html': 'text/html',
+              '.ico': 'image/x-icon',
+              '.jpg': 'image/jpeg',
+              '.png': 'image/png',
+              '.gif': 'image/gif',
+              '.css': 'text/css',
+              '.js': 'text/javascript'
+            }[url.substr(dotoffset)];
+          res.setHeader('Content-type', mimetype);
+          res.end(data);
+          console.log(url, mimetype);
+        } else {
+          console.log(`file not found: ${req.url}`);
+          res.writeHead(404, 'Not Found');
+          res.end();
+        }
+      });
     }
   } catch (error) {
     res.statusCode = 500;

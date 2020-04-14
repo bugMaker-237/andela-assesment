@@ -1,0 +1,187 @@
+html {
+  font-family: 'IBM Plex Mono', 'Courier New', Courier, monospace;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-100 {
+  flex: 100%;
+}
+
+.flex-50 {
+  flex: 50%;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+body {
+  background-color: aliceblue;
+  background-image: url(./img.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  align-items: center;
+  justify-content: center;
+}
+
+h1.header {
+  margin-left: 18px;
+  color: white;
+}
+
+main h4 {
+  margin-left: 12px;
+}
+
+.block-2 .impact {
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.644);
+  border-radius: 16px;
+  margin: 1rem;
+  color: white;
+}
+
+.block-2 .impact h2 {
+  margin-left: 24px;
+}
+
+.card-1 {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.card-1:hover {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.card-2 {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.card-3 {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.card-4 {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.card-5 {
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+.color-blocks {
+  justify-content: space-evenly;
+}
+
+.color-blocks div {
+  width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  margin: 12px;
+  padding: 12px;
+}
+
+.color-blocks div:nth-child(1) {
+  background-color: rgb(183, 30, 76);
+}
+
+.color-blocks div:nth-child(2) {
+  background-color: #f17539;
+}
+
+.color-blocks div:nth-child(3) {
+  background-color: #1094d2;
+}
+
+.color-blocks div:nth-child(4) {
+  background-color: #0e814a;
+}
+
+.color-blocks div:nth-child(5) {
+  background-color: #f89d32;
+}
+
+.color-blocks div:nth-child(6) {
+  background-color: #fffdf9;
+  color: #333;
+}
+
+.color-blocks div:nth-child(7) {
+  background-color: #333;
+}
+
+.color-blocks div h3 {
+  max-width: 100px;
+  font-size: 14px;
+  margin: 4px;
+  text-align: center;
+  vertical-align: top;
+  height: 36px;
+}
+
+@media (max-width: 600px) {
+  body main {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flex-row-responsive {
+    flex-direction: column;
+  }
+}
+
+/******FORM SECTION*******/
+.block-1 {
+  padding: 16px;
+}
+
+#form {
+  background-color: whitesmoke;
+  min-width: 300px;
+  border-radius: 16px;
+  padding: 8px;
+}
+
+input,
+select,
+button {
+  font-family: inherit;
+  margin: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border-color: transparent;
+  transition: all linear 0.3s;
+}
+
+input {
+  outline: none;
+  border-radius: 8px;
+  border-style: solid;
+}
+
+input:focus,
+select:focus {
+  border-color: rgb(130, 180, 238);
+  outline: none;
+}
+
+button {
+  background-color: #1094d2;
+  cursor: pointer;
+  color: whitesmoke;
+}

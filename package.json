@@ -5,7 +5,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "./node_modules/.bin/babel src -d lib",
+    "build": "./node_modules/.bin/babel src -d lib && cp ./src/index.html ./lib && cp ./src/style.css ./lib && cp ./src/img.jpg ./lib",
     "start": "node ./lib",
     "lint": "eslint ./src/"
   },

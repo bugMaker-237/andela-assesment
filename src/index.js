@@ -25,6 +25,15 @@ const respondWithPlainText = (res, obj) => {
   res.write(obj);
 };
 
+const respondWithHML = (res) => {
+  res.setHeader('Content-Type', 'text/html');
+  const f = FileSystem.readFileSync(
+    join(__dirname, 'index.html'),
+    'utf8'
+  ).toString();
+  res.write(f);
+};
+
 const log = (method, path, status, startTime) => {
   FileSystem.appendFileSync(
     join(__dirname, 'logs.log'),
@@ -85,10 +94,7 @@ const server = createServer((req, res) => {
       });
     } else {
       res.statusCode = 200;
-      respondWithPlainText(
-        res,
-        'BuildforSDG-Cohort1-Assessment/covid-19-estimator'
-      );
+      respondWithHML(res);
       res.end();
     }
   } catch (error) {

@@ -25,10 +25,12 @@ const respondWithPlainText = (res, obj) => {
   res.write(obj);
 };
 
-const log = (method, path, status, elapsedTime) => {
+const log = (method, path, status, startTime) => {
   FileSystem.appendFileSync(
     join(__dirname, 'logs.log'),
-    `${method} ${path} ${status} ${elapsedTime}ms\n`
+    `${method} ${path} ${status} ${
+      new Date().getTime() - startTime.getTime()
+    }ms\n`
   );
 };
 
@@ -44,7 +46,7 @@ const getLogs = () => {
 
 const server = createServer((req, res) => {
   const reqUrl = parse(req.url, true);
-  const start = Date.now();
+  const start = new Date();
   try {
     if (reqUrl.pathname.startsWith(apiUrl)) {
       const [, route] = reqUrl.pathname.split(apiUrl);
@@ -64,11 +66,11 @@ const server = createServer((req, res) => {
             respondWithJSON(res, estimations);
           }
           res.statusCode = 200;
-          log(req.method, reqUrl.pathname, res.statusCode, Date.now() - start);
+          log(req.method, reqUrl.pathname, res.statusCode, start);
         } else if (route === '/logs' && req.method === 'GET') {
           res.statusCode = 200;
           respondWithPlainText(res, getLogs());
-          log(req.method, reqUrl.pathname, res.statusCode, Date.now() - start);
+          log(req.method, reqUrl.pathname, res.statusCode, start);
         } else {
           res.statusCode = 400;
           respondWithPlainText(res, 'NO DATA FOUND IN REQUEST');
